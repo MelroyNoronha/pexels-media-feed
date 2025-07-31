@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, ViewToken } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchMedia } from '../api/pexels';
-import { MediaItem } from '../types/pexels';
+import { MediaItem, MediaType } from '../types/pexels';
 import MediaCard from '../components/MediaCard';
 import { RootStackParamList } from '../../App';
 
-const NUM_COLUMNS = 3;
+const NUM_COLUMNS = 2;
 
 const FeedScreen: React.FC = () => {
   const [media, setMedia] = useState<MediaItem[]>([]);
@@ -72,11 +72,43 @@ const FeedScreen: React.FC = () => {
     loadMedia(1);
   }, [loadMedia]);
 
+  const [activeVideoId, setActiveVideoId] = useState<number | null>(null);
+
+  const onViewableItemsChanged = useCallback(
+    ({
+      viewableItems,
+    }: {
+      viewableItems: ViewToken<MediaItem>[];
+      changed: ViewToken<MediaItem>[];
+    }) => {
+      // Find the video item closest to the center of the screen
+      const videoViewables = viewableItems.filter((vi: any) => vi.item.type === 'Video');
+      if (videoViewables.length === 0) {
+        setActiveVideoId(null);
+        return;
+      }
+      // Pick the video whose index is closest to the middle of the visible items
+      const centerIndex = Math.floor(videoViewables.length / 2);
+      setActiveVideoId(videoViewables[centerIndex].item.id);
+    },
+    []
+  );
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 100, // Only consider items that are fully visible
+    minimumViewablePercent: 100,
+    waitForInteraction: true,
+  };
+
   const renderItem = useCallback(
     ({ item }: { item: MediaItem }) => (
-      <MediaCard item={item} onPress={() => handleMediaPress(item)} />
+      <MediaCard
+        item={item}
+        onPress={() => handleMediaPress(item)}
+        shouldPlayVideo={item.type === MediaType.Video ? item.id === activeVideoId : false}
+      />
     ),
-    [handleMediaPress]
+    [handleMediaPress, activeVideoId]
   );
 
   const renderFooter = useCallback(() => {
@@ -112,9 +144,11 @@ const FeedScreen: React.FC = () => {
         maxToRenderPerBatch={12}
         updateCellsBatchingPeriod={100}
         initialNumToRender={12}
-        windowSize={11}
+        windowSize={3}
         contentContainerStyle={styles.listContent}
         columnWrapperStyle={styles.columnWrapper}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
       />
     </SafeAreaView>
   );

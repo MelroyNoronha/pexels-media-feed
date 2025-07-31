@@ -1,20 +1,41 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
+import { ResizeMode, Video } from 'expo-av';
+
 import { MediaItem, MediaType } from '../types/pexels';
 
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = width / 3 - 4; // 3 items per row with 2px gap
+const ITEM_WIDTH = width / 2 - 4; // 2px gap
 
 interface MediaCardProps {
   item: MediaItem;
   onPress: () => void;
+  shouldPlayVideo?: boolean;
 }
 
-const MediaCard: React.FC<MediaCardProps> = ({ item, onPress }) => {
+const MediaCard: React.FC<MediaCardProps> = ({ item, onPress, shouldPlayVideo }) => {
   const thumbnailUrl =
     item.type === MediaType.Photo ? item.src.medium : item.video_pictures?.[0]?.picture || '';
 
+  if (item.type === MediaType.Video && shouldPlayVideo) {
+    const videoUrl = item.video_files[0]?.link;
+    return (
+      <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
+        <View style={styles.imageContainer}>
+          <Video
+            source={{ uri: videoUrl }}
+            style={styles.image}
+            resizeMode={ResizeMode.COVER}
+            shouldPlay
+            isMuted
+            isLooping
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  // fallback to image for photo or non-visible video
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
@@ -24,13 +45,6 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onPress }) => {
           style={styles.image}
           contentFit="cover"
         />
-        {item.type === MediaType.Video && (
-          <View style={styles.videoIndicator}>
-            <View style={styles.playButton}>
-              <View style={styles.playTriangle} />
-            </View>
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );
@@ -39,12 +53,12 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     margin: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   imageContainer: {
     width: ITEM_WIDTH,
     height: ITEM_WIDTH,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'rgba(0,0,0,0.9)',
   },
   image: {
     width: '100%',
@@ -55,26 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-  playButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  playTriangle: {
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
-    borderBottomWidth: 6,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#333',
-    transform: [{ rotate: '90deg' }],
-    marginLeft: 4,
   },
 });
 
