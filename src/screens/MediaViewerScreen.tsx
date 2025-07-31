@@ -239,7 +239,7 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
           <Video
             source={{ uri: videoUrl }}
             style={styles.media}
-            useNativeControls
+            useNativeControls={false}
             resizeMode={ResizeMode.CONTAIN}
             isLooping
             shouldPlay={isActive}
@@ -263,12 +263,9 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
               }
             }}
             onError={handleError}
+            posterSource={{uri: thumbnailUrl}}
+            posterStyle={styles.media}
           />
-          {isLoading && (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#fff" />
-            </View>
-          )}
           {hasError && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>Failed to load video</Text>
