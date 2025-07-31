@@ -1,0 +1,13 @@
+node_modules/
+android/
+ios/
+.expo/
+dist/
+build/
+*.d.ts
+*.snap
+*.png
+*.jpg
+*.jpeg
+*.gif
+.env
