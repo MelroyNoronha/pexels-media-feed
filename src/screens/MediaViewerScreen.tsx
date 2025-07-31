@@ -94,7 +94,7 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
       };
 
       if (item.type === MediaType.Video) {
-        const videoUrl = item.video_files[0].link;
+        const videoUrl = item.video_files[1].link;
         const thumbnailUrl = item.video_pictures?.[0]?.picture || '';
 
         return (
@@ -126,6 +126,7 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
                 }
               }}
               onError={handleError}
+              usePoster
               posterSource={{ uri: thumbnailUrl }}
               posterStyle={styles.media}
             />
@@ -244,6 +245,14 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#000',
     zIndex: 1,
+  },
+  videoThumbnail: {
+    alignContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000',
+    zIndex: 2,
   },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,

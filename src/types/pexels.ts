@@ -1,7 +1,7 @@
 export enum MediaType {
   Photo = 'Photo',
   Video = 'Video',
-};
+}
 
 export interface MediaItemBase {
   id: number;
@@ -29,7 +29,7 @@ export interface Photo extends MediaItemBase {
   };
 }
 
-export type VideoQuality =  "hd" | "sd" | "default";
+export type VideoQuality = 'hd' | 'sd' | 'default';
 
 export interface VideoFile {
   id: number;
