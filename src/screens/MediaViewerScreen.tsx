@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -15,6 +15,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { RootStackParamList } from '../../App';
 import { MediaItem, MediaType } from '../types/pexels';
@@ -175,7 +176,28 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   );
 
-  // Step 2: PanGestureHandler for vertical swipe navigation
+  // Step 3: Animate media transitions vertically
+  const transitionY = useSharedValue(0);
+  const prevIndex = useRef(currentIndex);
+
+  useEffect(() => {
+    if (currentIndex > prevIndex.current) {
+      // Swiped up: animate up
+      transitionY.value = 500;
+      transitionY.value = withTiming(0, { duration: 250 });
+    } else if (currentIndex < prevIndex.current) {
+      // Swiped down: animate down
+      transitionY.value = -500;
+      transitionY.value = withTiming(0, { duration: 250 });
+    }
+    prevIndex.current = currentIndex;
+  }, [currentIndex]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: transitionY.value }],
+  }));
+
+  // PanGestureHandler for vertical swipe navigation
   const onHandlerStateChange = (event: any) => {
     if (event.nativeEvent.state === State.END) {
       const { translationY } = event.nativeEvent;
@@ -196,11 +218,8 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <PanGestureHandler
-        onHandlerStateChange={onHandlerStateChange}
-        minDist={10}
-      >
-        <View style={styles.mediaContainer}>
+      <PanGestureHandler onHandlerStateChange={onHandlerStateChange} minDist={10}>
+        <Animated.View style={[styles.mediaContainer, animatedStyle]}>
           {currentItem && (
             <MediaComponent
               item={currentItem}
@@ -213,7 +232,7 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
               }}
             />
           )}
-        </View>
+        </Animated.View>
       </PanGestureHandler>
 
       {/* Close button */}
