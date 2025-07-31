@@ -11,22 +11,13 @@ interface MediaCardProps {
 }
 
 const MediaCard: React.FC<MediaCardProps> = ({ item, onPress }) => {
-  const thumbnailUrl = item.type === MediaType.Photo 
-    ? item.src.medium 
-    : item.video_pictures?.[0]?.picture || '';
+  const thumbnailUrl =
+    item.type === MediaType.Photo ? item.src.medium : item.video_pictures?.[0]?.picture || '';
 
   return (
-    <TouchableOpacity 
-      style={styles.container} 
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: thumbnailUrl }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: thumbnailUrl }} style={styles.image} resizeMode="cover" />
         {item.type === MediaType.Video && (
           <View style={styles.videoIndicator}>
             <View style={styles.playButton}>

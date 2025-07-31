@@ -58,23 +58,26 @@ const FeedScreen: React.FC = () => {
     }
   }, [loading, hasMore, page, loadMedia]);
 
-  const handleMediaPress = useCallback((item: MediaItem) => {
-    navigation.navigate('MediaViewer', { 
-      initialIndex: media.findIndex(m => m.id === item.id),
-      mediaItems: media,
-    });
-  }, [media, navigation]);
+  const handleMediaPress = useCallback(
+    (item: MediaItem) => {
+      navigation.navigate('MediaViewer', {
+        initialIndex: media.findIndex(m => m.id === item.id),
+        mediaItems: media,
+      });
+    },
+    [media, navigation]
+  );
 
   useEffect(() => {
     loadMedia(1);
   }, [loadMedia]);
 
-  const renderItem = useCallback(({ item }: { item: MediaItem }) => (
-    <MediaCard 
-      item={item} 
-      onPress={() => handleMediaPress(item)} 
-    />
-  ), [handleMediaPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: MediaItem }) => (
+      <MediaCard item={item} onPress={() => handleMediaPress(item)} />
+    ),
+    [handleMediaPress]
+  );
 
   const renderFooter = useCallback(() => {
     if (!loading) return null;
@@ -98,7 +101,7 @@ const FeedScreen: React.FC = () => {
       <FlatList
         data={media}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         numColumns={NUM_COLUMNS}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
