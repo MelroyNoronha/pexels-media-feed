@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { MediaItem, MediaType } from '../types/pexels';
 
 const { width } = Dimensions.get('window');
@@ -17,7 +18,12 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: thumbnailUrl }} style={styles.image} resizeMode="cover" />
+        <Image
+          cachePolicy="memory-disk"
+          source={{ uri: thumbnailUrl }}
+          style={styles.image}
+          contentFit="cover"
+        />
         {item.type === MediaType.Video && (
           <View style={styles.videoIndicator}>
             <View style={styles.playButton}>
