@@ -14,7 +14,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import { RootStackParamList } from '../../App';
 import { MediaItem, MediaType } from '../types/pexels';
@@ -175,22 +175,46 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   );
 
+  // Step 2: PanGestureHandler for vertical swipe navigation
+  const onHandlerStateChange = (event: any) => {
+    if (event.nativeEvent.state === State.END) {
+      const { translationY } = event.nativeEvent;
+      if (translationY < -50) {
+        // Swipe Up: Next media
+        if (currentIndex < mediaItems.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+        }
+      } else if (translationY > 50) {
+        // Swipe Down: Previous media
+        if (currentIndex > 0) {
+          setCurrentIndex(currentIndex - 1);
+        }
+      }
+      // No action if swipe is not significant or at edges
+    }
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View style={styles.mediaContainer}>
-        {currentItem && (
-          <MediaComponent
-            item={currentItem}
-            isActive={true}
-            style={styles.media}
-            onLoad={() => {
-              if (currentItem.type === MediaType.Video) {
-                setIsPaused(false);
-              }
-            }}
-          />
-        )}
-      </View>
+      <PanGestureHandler
+        onHandlerStateChange={onHandlerStateChange}
+        minDist={10}
+      >
+        <View style={styles.mediaContainer}>
+          {currentItem && (
+            <MediaComponent
+              item={currentItem}
+              isActive={true}
+              style={styles.media}
+              onLoad={() => {
+                if (currentItem.type === MediaType.Video) {
+                  setIsPaused(false);
+                }
+              }}
+            />
+          )}
+        </View>
+      </PanGestureHandler>
 
       {/* Close button */}
       <TouchableOpacity
