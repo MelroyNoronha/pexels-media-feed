@@ -81,3 +81,8 @@
 - This reduces the frequency of state updates and re-renders during fast scrolling, improving both performance and battery life.
 
 ---
+
+## Demo Videos:
+
+- Android: https://drive.google.com/file/d/1OkcxLuFCtFajKrJP6yV626RDKSDCry7S/view?usp=sharing
+- iOS: https://drive.google.com/file/d/14Cp1Xy-zLRcfHkTvo5SEEfADf7iht-yD/view?usp=sharing

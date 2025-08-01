@@ -18,21 +18,18 @@ const FeedScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const loadMedia = useCallback(async (pageNum: number, isRefreshing = false) => {
+  const loadMedia = useCallback(async (pageNum: number) => {
     try {
-      if (isRefreshing) {
-        setRefreshing(true);
-      } else if (pageNum === 1) {
+      if (pageNum === 1) {
         setLoading(true);
       }
 
       const response = await fetchMedia(pageNum);
 
-      if (isRefreshing || pageNum === 1) {
+      if (pageNum === 1) {
         setMedia(response.media);
       } else {
         setMedia(prev => [...prev, ...response.media]);
@@ -43,14 +40,8 @@ const FeedScreen: React.FC = () => {
       console.error('Failed to load media:', error);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   }, []);
-
-  const handleRefresh = useCallback(() => {
-    loadMedia(1, true);
-    setPage(1);
-  }, [loadMedia]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
@@ -147,7 +138,6 @@ const FeedScreen: React.FC = () => {
         columnWrapperStyle={styles.columnWrapper}
         onViewableItemsChanged={debouncedOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
-        refreshing={refreshing}
       />
     </SafeAreaView>
   );
