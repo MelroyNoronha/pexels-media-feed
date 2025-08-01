@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet, ActivityIndicator, ViewToken } from 'react-
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import debounce from 'lodash.debounce';
 
 import { fetchMedia } from '../api/pexels';
 import { MediaItem, MediaType } from '../types/pexels';
@@ -94,6 +95,8 @@ const FeedScreen: React.FC = () => {
     []
   );
 
+  const debouncedOnViewableItemsChanged = debounce(onViewableItemsChanged, 500);
+
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 100, // Only consider items that are fully visible
     minimumViewablePercent: 100,
@@ -147,7 +150,7 @@ const FeedScreen: React.FC = () => {
         windowSize={3}
         contentContainerStyle={styles.listContent}
         columnWrapperStyle={styles.columnWrapper}
-        onViewableItemsChanged={onViewableItemsChanged}
+        onViewableItemsChanged={debouncedOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
     </SafeAreaView>
