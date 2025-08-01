@@ -1,4 +1,4 @@
-# PexelMediaFeed
+# Pexels Media Feed
 
 ## Overview
 
@@ -15,6 +15,12 @@
 - **Debounced scroll event handling** for resource-efficient viewability tracking and maintaining a smooth scrolling experience.
 - **React Native New Architecture** (Fabric + TurboModules) and Hermes JS engine enabled for maximum performance.
 - All navigation and gesture handling is implemented with React Navigation’s native stack, supporting native gestures and safe area handling.
+
+### Challenges faced and how I solved them:
+
+- **Autoplaying video preview:** Initially I implemented this to simply play the video if it was within the screen, but this created a major performance bottleneck due to multiple video players being rendered on the same screen. Solved this by only autoplaying a single video out of all the videos that are visible in the view.
+- **Scroll performance:** In order to detect which video should be autoplayed I used the onViewableItemsChanged callback which gives me a list of the current items rendered within the screen. This detection mechanism triggers state updates which could impact scroll performance. To manage this I used debounce on the detection logic so it would only run after the scrolling has stopped. This ensured smooth scrolling.
+- **Transition from image to video preview:** For autoplaying videos the switch from image to video worked fine but the UX was not smooth, it looked like it was flickering. To make the transition smoother I implemented an opacity transition and wrapped the image and video components inside an animated view.
 
 ---
 
