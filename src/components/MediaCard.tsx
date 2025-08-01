@@ -7,7 +7,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import { MediaItem, MediaType } from '../types/pexels';
 
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = width / 2 - 4; // 2px gap
+export const ITEM_WIDTH = width / 2 - 4; // 2px gap
 
 interface MediaCardProps {
   item: MediaItem;

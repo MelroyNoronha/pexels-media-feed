@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, ViewToken } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ViewToken } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +8,7 @@ import debounce from 'lodash.debounce';
 
 import { fetchMedia } from '../api/pexels';
 import { MediaItem, MediaType } from '../types/pexels';
-import MediaCard from '../components/MediaCard';
+import MediaCard, { ITEM_WIDTH } from '../components/MediaCard';
 import { RootStackParamList } from '../../App';
 
 const NUM_COLUMNS = 2;
@@ -133,25 +134,20 @@ const FeedScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
+      <FlashList
         data={media}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item: MediaItem) => item.id.toString()}
         numColumns={NUM_COLUMNS}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
-        onRefresh={handleRefresh}
-        refreshing={refreshing}
-        removeClippedSubviews
-        maxToRenderPerBatch={12}
-        updateCellsBatchingPeriod={100}
-        initialNumToRender={12}
-        windowSize={3}
+        estimatedItemSize={ITEM_WIDTH}
         contentContainerStyle={styles.listContent}
         columnWrapperStyle={styles.columnWrapper}
         onViewableItemsChanged={debouncedOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
+        refreshing={refreshing}
       />
     </SafeAreaView>
   );
