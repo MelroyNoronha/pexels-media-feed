@@ -9,6 +9,7 @@ import {
   Text,
   ViewStyle,
   StyleProp,
+  SafeAreaView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -207,28 +208,55 @@ const MediaViewerScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <PanGestureHandler onHandlerStateChange={onHandlerStateChange} minDist={10}>
-        <Animated.View style={[styles.mediaContainer, animatedStyle]}>
-          {currentItem && (
-            <MediaComponent
-              item={currentItem}
-              isActive={true}
-              style={styles.media}
-              onLoad={() => {
-                if (currentItem.type === MediaType.Video) {
-                  setIsPaused(false);
-                }
-              }}
-            />
-          )}
-        </Animated.View>
-      </PanGestureHandler>
-    </GestureHandlerRootView>
+    <SafeAreaView style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={closeViewer} hitSlop={16}>
+          <View style={styles.backIcon} />
+        </TouchableOpacity>
+        <PanGestureHandler onHandlerStateChange={onHandlerStateChange} minDist={10}>
+          <Animated.View style={[styles.mediaContainer, animatedStyle]}>
+            {currentItem && (
+              <MediaComponent
+                item={currentItem}
+                isActive={true}
+                style={styles.media}
+                onLoad={() => {
+                  if (currentItem.type === MediaType.Video) {
+                    setIsPaused(false);
+                  }
+                }}
+              />
+            )}
+          </Animated.View>
+        </PanGestureHandler>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  backIcon: {
+    width: 14,
+    height: 14,
+    borderLeftWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: 'white',
+    transform: [{ rotate: '45deg' }],
+    marginLeft: 2,
+  },
   container: {
     flex: 1,
     backgroundColor: '#000',
