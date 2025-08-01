@@ -27,6 +27,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-video"]
+    "plugins": ["expo-video"],
+    "extra": {
+      "PEXELS_API_KEY": "M9Moel9GsArJamlr5r9jreQwZm4Z8EZRyIRAN29lEs1UszjOfZrklVAy",
+      "PEXELS_COLLECTION_ID": "vog4mjt"
+    }
   }
 }

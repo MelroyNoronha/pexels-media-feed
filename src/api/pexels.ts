@@ -1,7 +1,9 @@
 import { CollectionResponse } from '../types/pexels';
 
-const API_KEY = 'M9Moel9GsArJamlr5r9jreQwZm4Z8EZRyIRAN29lEs1UszjOfZrklVAy';
-const COLLECTION_ID = 'vog4mjt';
+import Constants from 'expo-constants';
+
+const API_KEY = Constants.expoConfig?.extra?.PEXELS_API_KEY;
+const COLLECTION_ID = Constants.expoConfig?.extra?.PEXELS_COLLECTION_ID;
 const API_BASE_URL = 'https://api.pexels.com/v1/collections';
 
 export const fetchMedia = async (page: number = 1): Promise<CollectionResponse> => {
