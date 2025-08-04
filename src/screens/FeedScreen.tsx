@@ -8,10 +8,11 @@ import debounce from 'lodash.debounce';
 
 import { fetchMedia } from '../api/pexels';
 import { MediaItem, MediaType } from '../types/pexels';
-import MediaCard, { ITEM_WIDTH } from '../components/MediaCard';
+import MediaCard from '../components/MediaCard';
 import { RootStackParamList } from '../../App';
 
 const NUM_COLUMNS = 2;
+const PREVIEW_VIDEO_DURATION = 4000;
 
 const FeedScreen: React.FC = () => {
   const [media, setMedia] = useState<MediaItem[]>([]);
@@ -66,7 +67,10 @@ const FeedScreen: React.FC = () => {
   }, [loadMedia]);
 
   const [activeVideoId, setActiveVideoId] = useState<number | null>(null);
+  const [viewableVideoIds, setViewableVideoIds] = useState<number[]>([]);
+  const [videoRotationIndex, setVideoRotationIndex] = useState(0);
 
+  // Update viewableVideoIds whenever viewable items change
   const onViewableItemsChanged = useCallback(
     ({
       viewableItems,
@@ -74,20 +78,32 @@ const FeedScreen: React.FC = () => {
       viewableItems: ViewToken<MediaItem>[];
       changed: ViewToken<MediaItem>[];
     }) => {
-      // Find the video item closest to the center of the screen
       const videoViewables = viewableItems.filter((vi: any) => vi.item.type === 'Video');
-      if (videoViewables.length === 0) {
-        setActiveVideoId(null);
-        return;
-      }
-      // Pick the video whose index is closest to the middle of the visible items
-      const centerIndex = Math.floor(videoViewables.length / 2);
-      setActiveVideoId(videoViewables[centerIndex].item.id);
+      const ids = videoViewables.map((vi: any) => vi.item.id);
+      setViewableVideoIds(ids);
     },
     []
   );
 
   const debouncedOnViewableItemsChanged = debounce(onViewableItemsChanged, 500);
+
+  useEffect(() => {
+    if (viewableVideoIds.length === 0) {
+      setActiveVideoId(null);
+      setVideoRotationIndex(0);
+      return;
+    }
+    setActiveVideoId(viewableVideoIds[videoRotationIndex % viewableVideoIds.length]);
+    const timer = setTimeout(() => {
+      setVideoRotationIndex(prev => (prev + 1) % viewableVideoIds.length);
+    }, PREVIEW_VIDEO_DURATION);
+    return () => clearTimeout(timer);
+  }, [viewableVideoIds, videoRotationIndex]);
+
+  useEffect(() => {
+    // Reset rotation index if viewableVideoIds change
+    setVideoRotationIndex(0);
+  }, [viewableVideoIds]);
 
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 100, // Only consider items that are fully visible
@@ -133,9 +149,7 @@ const FeedScreen: React.FC = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
-        estimatedItemSize={ITEM_WIDTH}
         contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.columnWrapper}
         onViewableItemsChanged={debouncedOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
@@ -150,10 +164,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 1, // For the gap between items
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    marginBottom: 2,
   },
   loadingContainer: {
     padding: 16,
