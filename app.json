@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PexelMediaFeed",
-    "slug": "PexelMediaFeed",
+    "name": "Pexels Media Feed",
+    "slug": "PexelsMediaFeed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.PexelMediaFeed"
+      "bundleIdentifier": "com.anonymous.PexelsMediaFeed"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,15 +22,11 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.PexelMediaFeed"
+      "package": "com.anonymous.PexelsMediaFeed"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-video"],
-    "extra": {
-      "PEXELS_API_KEY": "M9Moel9GsArJamlr5r9jreQwZm4Z8EZRyIRAN29lEs1UszjOfZrklVAy",
-      "PEXELS_COLLECTION_ID": "vog4mjt"
-    }
+    "plugins": ["expo-video"]
   }
 }
