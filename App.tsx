@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MediaItem } from './src/types/pexels';
 
 // Screens
@@ -19,23 +20,25 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          animation: 'fade',
-          gestureEnabled: true,
-        }}
-      >
-        <Stack.Screen name="Feed" component={FeedScreen} />
-        <Stack.Screen
-          name="MediaViewer"
-          component={MediaViewerScreen}
-          options={{
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
             animation: 'fade',
+            gestureEnabled: true,
           }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+        >
+          <Stack.Screen name="Feed" component={FeedScreen} />
+          <Stack.Screen
+            name="MediaViewer"
+            component={MediaViewerScreen}
+            options={{
+              animation: 'fade',
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
